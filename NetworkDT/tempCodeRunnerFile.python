@@ -1,0 +1,36 @@
+from mininet.topo import Topo
+from mininet.net import Mininet
+from mininet.node import Controller, RemoteController
+from mininet.cli import CLI
+
+class InternetworkTopo(Topo):
+    def build(self):
+        # Create routers
+        r1 = self.addHost('r1')
+        r2 = self.addHost('r2')
+        r3 = self.addHost('r3')
+
+        # Create switches
+        s1 = self.addSwitch('s1')
+        s2 = self.addSwitch('s2')
+
+        # Create hosts
+        host_a = self.addHost('host_a', ip='10.0.0.1/24')
+        host_b = self.addHost('host_b', ip='10.0.1.1/24')
+        host_c = self.addHost('host_c', ip='10.0.2.1/24')
+        mobile_node = self.addHost('mobile_node', ip='10.0.3.1/24')
+
+        # Add links between routers, switches, and hosts
+        self.addLink(host_a, s1)
+        self.addLink(host_b, s2)
+        self.addLink(host_c, s2)
+        self.addLink(mobile_node, s2)
+        self.addLink(r1, s1)
+        self.addLink(r1, r2)
+        self.addLink(r2, r3)
+        self.addLink(r3, s2)
+
+topo = InternetworkTopo()
+net = Mininet(topo=topo, controller=RemoteController)
+net.start()
+CLI(net)
